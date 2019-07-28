@@ -5,7 +5,8 @@
         <script
 			  src="https://code.jquery.com/jquery-3.4.1.js"
 			  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-			  crossorigin="anonymous"></script>
+              crossorigin="anonymous"></script>
+              <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body>
@@ -26,7 +27,34 @@
         </div>
     </div>
 <script>
+$(() => {
+    $("#send").click(()=>{
+       sendMessage({
+          name: $("#name").val(), 
+          message:$("#message").val()});
+        })
+      getMessages()
+    })
+    
+function addMessages(message){
+   $("#messages").append(`
+      <h4> ${message.name} </h4>
+      <p>  ${message.message} </p>`)
+   }
+   
+function getMessages(){
+  $.get("http://localhost:3000/messages", (data) => {
+   data.forEach(addMessages);
+   })
+ }
+ 
+function sendMessage(message){
+   $.post("http://localhost:3000/messages", message)
+ }
 
+ var socket = io();
+
+ socket.on("message", addMessages)
 </script>
 </body>
 </html>
